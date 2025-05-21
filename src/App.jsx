@@ -7,7 +7,7 @@ export default function App() {
       <Header />
       <main>
         <Todos />
-      </main>
+      </main>      
     </>
   );
 }

@@ -1,15 +1,3 @@
-import { PlusCircle } from "lucide-react";
-import { buttonVariants } from "./ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import AddNewTodoForm from "./AddNewTodoForm";
 import {
   Select,
   SelectContent,
@@ -17,11 +5,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDispatch } from "react-redux";
+import { setFilter } from "../lib/redux-toolkit/slices/todo-slice";
+import { PlusCircle } from "lucide-react";
+import {  Button } from "./ui/button";
+import { setAddModal } from "../lib/redux-toolkit/slices/modal-slice";
 
 export default function Header() {
-  function handleFilter(value) {
-    dispatch({});
+  const dispatch = useDispatch();
+
+  function handleFilter(priority) {
+    dispatch(setFilter({priority}))
   }
+
+  function handleClick(){
+    dispatch(setAddModal())
+
+  }
+
   return (
     <header className="py-5 shadow-md fixed left-0 right-0 bg-white">
       <div className="container mx-auto px-5 flex items-center justify-between">
@@ -38,23 +39,11 @@ export default function Header() {
               <SelectItem value="low">Quyi</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        <Dialog>
-          <DialogTrigger className={buttonVariants({ variant: "default" })}>
+          <Button onClick={handleClick}>
             <PlusCircle />
             New
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Yangi todo qo'shish</DialogTitle>
-              <DialogDescription>
-                Siz bu yerda yangi todo qo'shishingiz mumkin
-              </DialogDescription>
-            </DialogHeader>
-            <AddNewTodoForm />
-          </DialogContent>
-        </Dialog>
+          </Button>
+        </div>
       </div>
     </header>
   );

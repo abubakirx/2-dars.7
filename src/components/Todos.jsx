@@ -1,24 +1,28 @@
 import { toast } from "sonner";
+import { getTodos } from "../request";
 import Loading from "./Loading";
 import Todo from "./Todo";
-import { setData } from "../lib/rudex.toolkit/slices/todo-slices";
-import { useSelector } from "react-redux";
+import { setData } from "../lib/redux-toolkit/slices/todo-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function Todos() {
-  useSelector((state) => {});
+  const { data, filter } = useSelector((state) => state.todo);
+  const dispatch = useDispatch();
 
-  getTodos()
-    .then(
-      (res) => {
-        console.log(res);
-        setData(res);
-      },
-      ({ message }) => {
-        toast.error(message);
-      }
-    )
+  useEffect(() => {
+    getTodos(filter)
+      .then((res) => {
+        console.log(res)
+        dispatch(setData(res))
+      })
+      .catch(({ message }) => {
+        toast.error(message)
+      })
+      .finally(() => { });
+  }, [JSON.stringify(filter)])
 
-    .finally();
+  console.log(filter)
 
   if (false) {
     return (
@@ -28,7 +32,7 @@ export default function Todos() {
     );
   }
 
-  if (error) {
+  if (false) {
     return (
       <div className="container mx-auto px-5 flex justify-center py-10">
         <p>{error}</p>
@@ -36,7 +40,7 @@ export default function Todos() {
     );
   }
 
-  if (todos.length === 0) {
+  if (data.length === 0) {
     return (
       <div className="container mx-auto px-5 flex justify-center py-10">
         <p>No data</p>
@@ -46,7 +50,7 @@ export default function Todos() {
 
   return (
     <div className="flex flex-col gap-5 container mx-auto px-5 pb-10 pt-[116px]">
-      {[].map(({ completed, title, id, priority }) => {
+      {data.map(({ completed, title, id, priority }) => {
         return (
           <Todo
             completed={completed}

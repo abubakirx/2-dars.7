@@ -9,14 +9,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import {  useEffect, useState } from "react";
 import { RefreshCcw } from "lucide-react";
 import { validation } from "../lib/utils";
 import { toast } from "sonner";
+import { addTodo } from "../request";
+import { addData, setLoading } from "../lib/redux-toolkit/slices/todo-slice";
+import { useDispatch } from "react-redux";
+import { setAddModal } from "../lib/redux-toolkit/slices/modal-slice";
+
 
 export default function AddNewTodoForm() {
-  const { dispatch } = useContext(GlobalContext);
-  const [addLoading, setAddLoading] = useState(false);
+  const [addLoading] = useState(false);
+  const [sending, setSending] = useState(null);
+  const dispatch = useDispatch()
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -37,8 +43,27 @@ export default function AddNewTodoForm() {
       e.target[target]?.focus();
       toast.info(message);
     } else {
+      setSending(sendData)
     }
   }
+    useEffect(()=>{
+      setLoading(true)
+      if (sending){
+        addTodo(sending)
+        .then((res)=>{
+          dispatch(addData(res));
+          dispatch(setAddModal())
+        })
+        .catch(({message})=>{
+          toast.error(message)
+        })
+        .finally(()=>{
+          setLoading(false)
+        })
+      }
+    }, [sending])
+
+
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
